@@ -1,0 +1,29 @@
+container org.hubert.User;
+
+platform {
+    java {
+        decorates {
+            Id as javax.persistence.Id
+        }
+    }
+    c# {
+        decorates {
+            Id as EntityFramework
+        }
+    }
+    typescript {
+        decorates {
+            Id as ignore
+        }
+    }
+}
+
+model UserBaseCredentials {
+    string name is not null;
+    int age is not null;
+}
+
+model User [extends|ex|improves|:] UserBaseCredentials {
+    @Id
+    string id is not null;
+}
