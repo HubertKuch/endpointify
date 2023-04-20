@@ -15,6 +15,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
+    "@types/node": "^18.15.11",
     "typescript": "^5.0.4"
   }
 }

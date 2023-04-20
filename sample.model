@@ -1,0 +1,4 @@
+model UserBaseCredentials {
+    string name is not null;
+    int age is not null;
+}
