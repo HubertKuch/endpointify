@@ -1,21 +1,14 @@
 {
   "compilerOptions": {
-    "module": "ESNext",
+    "module": "node16",
+    "moduleResolution": "classic",
     "esModuleInterop": true,
-    "target": "ESNext",
-    "moduleResolution": "Node",
-    "outDir": "dist",
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "isolatedModules": false,
-    "strict": true,
-    "noImplicitAny": true,
-    "useUnknownInCatchVariables": false,
-    "inlineSourceMap": true,
+    "target": "ES2015",
+    "sourceMap": true,
+    "outDir": "dist"
   },
+  "include": ["src/**/*", "index.ts"],
   "ts-node": {
     "esm": true
-  },
-  "include": ["src"],
-  "lib": ["esnext"]
+  }
 }
