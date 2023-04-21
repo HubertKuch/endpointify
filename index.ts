@@ -1,4 +1,6 @@
 import * as fs from "fs";
+import { EOL } from "os";
+import {EOF} from "dns";
 
 enum TokenType {
     CONTAINER,
@@ -16,6 +18,7 @@ enum TokenType {
     OPEN_CURLY_BRACES,
     CLOSE_CURLY_BRACES,
     IDENTIFIER,
+    EOF
 }
 
 const RESERVED_KEYWORDS: Record<string, TokenType> = {
@@ -63,35 +66,10 @@ class Tokenizer {
 
     public static tokenize(source: string): Array<Array<Token>> {
         const tokens: Array<Array<Token>> = new Array<Array<Token>>();
-        const lines: string[] = source.split("\n");
+        const lines: string[] = source.split(EOL);
 
         for (const line of lines) {
             tokens.push(this.tokenizeLine(line));
-        }
-
-        const tokensCopy: Token[][] = JSON.parse(JSON.stringify(tokens));
-
-        let line = 0;
-        while (tokensCopy.length > 0) {
-            const inlineTokens: Token[] = tokensCopy[0];
-
-            while (inlineTokens.length > 0) {
-                if (inlineTokens[0].type === TokenType.MODEL) {
-                    const openCurlyBracesToken: LineWithItemAndModel|undefined = this.findNextTokenOfType(tokens, TokenType.OPEN_CURLY_BRACES);
-                    const closeCurlyBracesToken: LineWithItemAndModel|undefined = this.findNextTokenOfType(tokens, TokenType.CLOSE_CURLY_BRACES);
-
-                    if (!openCurlyBracesToken || !closeCurlyBracesToken) {
-                        throw new Error("");
-                    }
-
-                    inlineTokens[0].body = this.getTokensBetweenLinesAndTokens(tokens, openCurlyBracesToken.line, openCurlyBracesToken.item, closeCurlyBracesToken.line, closeCurlyBracesToken.line)
-                        .filter(token => token.type !== TokenType.OPEN_CURLY_BRACES && token.type !== TokenType.CLOSE_CURLY_BRACES);
-                }
-
-                inlineTokens.shift();
-            }
-
-            tokensCopy.shift();
         }
 
         return tokens;
@@ -141,6 +119,8 @@ class Tokenizer {
                 chars.shift();
             }
         }
+
+        lineTokens.push({ type: TokenType.EOF, value: EOL })
 
         return lineTokens;
     }
