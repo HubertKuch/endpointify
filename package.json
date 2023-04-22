@@ -5,13 +5,21 @@
   "main": "index.js",
   "type": "commonjs",
   "scripts": {
-    "start": "tsc --build && node ./dist/index.js"
+    "start": "tsc --build && node ./dist/index.js",
+    "test": "ts-mocha -p tsconfig.json tests/**/*.spec.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^4.3.4",
+    "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.13",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
     "typescript": "^5.0.4"
+  },
+  "dependencies": {
+    "ts-mocha": "^10.0.0"
   }
 }

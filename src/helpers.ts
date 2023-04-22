@@ -24,12 +24,6 @@ export type Token = {
     value: string;
 };
 
-export type LineWithItemAndModel = {
-    line: number,
-    item: number,
-    token: Token
-};
-
 export const TYPES: Record<string, TokenType> = {
     "int": TokenType.INT,
     "string": TokenType.STRING,
@@ -49,4 +43,4 @@ export const RESERVED_KEYWORDS: Record<string, TokenType> = {
     "null": TokenType.NULL,
     "extends": TokenType.EXTENDS,
     "improves": TokenType.IMPROVES,
-}
+};
