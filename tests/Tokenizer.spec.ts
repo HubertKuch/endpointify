@@ -1,7 +1,6 @@
 import {expect} from "chai";
 import {Token} from "../src/helpers";
 import Tokenizer from "../src/Tokenizer";
-import * as timers from "timers";
 
 describe("Tokenizer test", () => {
     it('should return valid model tokens divided by new line char', function () {

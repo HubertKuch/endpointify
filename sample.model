@@ -1,4 +1,4 @@
-model UserBaseCredentials {
-    string name as not null;
-    int age as not null;
+enum UserRole {
+    USER
+    ADMIN
 }

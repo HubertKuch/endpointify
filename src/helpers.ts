@@ -36,6 +36,7 @@ export const RESERVED_KEYWORDS: Record<string, TokenType> = {
     "container": TokenType.CONTAINER,
     "platform": TokenType.PLATFORM,
     "model": TokenType.MODEL,
+    "enum": TokenType.ENUM,
     "decorates": TokenType.DECORATES,
     "string": TokenType.STRING,
     "int": TokenType.INT,

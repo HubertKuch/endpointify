@@ -39,6 +39,17 @@ export class Parser {
                 astTree.push(node);
 
                 flatTokens.shift();
+            } else if (flatTokens[0].type === TokenType.ENUM) {
+                const name: Token | null = flatTokens[1] ?? null;
+
+                if (!name) {
+                    throw new SyntaxError("Expected enum name. Like `enum UserRole {}`", lineCount);
+                }
+
+                const body: Token[] = this.getBodyBetweenCurlyBraces(flatTokens, lineCount, TokenType.IDENTIFIER);
+
+                astTree.push({ type: TokenType.ENUM, value: name.value, body });
+                flatTokens.shift();
             } else if (flatTokens[0].type === TokenType.EOF) {
                 lineCount += 1;
                 flatTokens.shift();
@@ -50,7 +61,7 @@ export class Parser {
         return astTree;
     }
 
-    private static getBodyBetweenCurlyBraces(flatTokens: Token[], lineCount: number): Token[] {
+    private static getBodyBetweenCurlyBraces(flatTokens: Token[], lineCount: number, ofType: TokenType = null): Token[] {
         const nextOpenBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.OPEN_CURLY_BRACES);
         const nextCloseBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.CLOSE_CURLY_BRACES);
 
@@ -63,7 +74,12 @@ export class Parser {
         }
 
         return this.getTokensBetweenLinesAndTokens(flatTokens, nextOpenBracesIndex, nextCloseBracesIndex)
-            .filter(token => token.type !== TokenType.OPEN_CURLY_BRACES && token.type !== TokenType.CLOSE_CURLY_BRACES && token.type !== TokenType.EOF);
+            .filter(token => {
+                return  token.type !== TokenType.OPEN_CURLY_BRACES &&
+                        token.type !== TokenType.CLOSE_CURLY_BRACES &&
+                        token.type !== TokenType.EOF &&
+                        (ofType !== null ? token.type === ofType : true)
+            });
     }
 
     private static parseProperty(plainProperty: Token[], line: number): ASTNode {
