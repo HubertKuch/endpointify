@@ -42,7 +42,7 @@ export class Parser {
             } else if (flatTokens[0].type === TokenType.ENUM) {
                 const name: Token | null = flatTokens[1] ?? null;
 
-                if (!name) {
+                if (!name || name.type !== TokenType.IDENTIFIER) {
                     throw new SyntaxError("Expected enum name. Like `enum UserRole {}`", lineCount);
                 }
 
