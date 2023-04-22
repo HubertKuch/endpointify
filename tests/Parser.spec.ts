@@ -2,7 +2,7 @@ import {Token} from "../src/helpers";
 import Tokenizer from "../src/Tokenizer";
 import ASTNode from "../src/ast/ASTNode";
 import {Parser} from "../src/parser/Parser";
-import {assert, expect, should} from "chai";
+import {assert, expect} from "chai";
 import {throws} from "assert";
 import SyntaxError from "../src/exceptions/SyntaxError";
 

@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Token, TokenType} from "../src/helpers";
+import {Token} from "../src/helpers";
 import Tokenizer from "../src/Tokenizer";
 
 describe("Tokenizer test", () => {
@@ -27,7 +27,7 @@ describe("Tokenizer test", () => {
     it('should tokenize enum with valid cases', function () {
         const source: string = "enum UserRole { USER ADMIN }";
 
-        const tokens :Token[][] = Tokenizer.tokenize(source);
+        const tokens: Token[][] = Tokenizer.tokenize(source);
 
         expect(tokens).to.be.not.null;
         expect(tokens[0][3].value).to.be.eq("USER");
@@ -37,7 +37,7 @@ describe("Tokenizer test", () => {
     it('should tokenize enum no cases', function () {
         const source: string = "enum UserRole {}";
 
-        const tokens :Token[][] = Tokenizer.tokenize(source);
+        const tokens: Token[][] = Tokenizer.tokenize(source);
 
         expect(tokens).to.be.not.empty;
     });
@@ -45,7 +45,7 @@ describe("Tokenizer test", () => {
     it('should tokenize enum with semicolon', function () {
         const source: string = "enum UserRole { USER; ADMIN; }";
 
-        const tokens :Token[][] = Tokenizer.tokenize(source);
+        const tokens: Token[][] = Tokenizer.tokenize(source);
 
         expect(tokens).to.be.not.empty;
         expect(tokens[0][3].value).to.be.eq("USER");
