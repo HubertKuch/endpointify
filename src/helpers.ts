@@ -5,7 +5,7 @@ export enum TokenType {
     DECORATES,
     STRING,
     INT,
-    IS,
+    AS,
     NOT,
     NULL,
     EXTENDS,
@@ -30,6 +30,13 @@ export type LineWithItemAndModel = {
     token: Token
 };
 
+export const TYPES: Record<string, TokenType> = {
+    "int": TokenType.INT,
+    "string": TokenType.STRING,
+};
+
+export const TO_STRING_TYPES_REPRESENTATION = "<" + (Object.keys(TYPES).reduce((prev, curr) => `${prev} ${curr}`, "").trim()) + ">";
+
 export const RESERVED_KEYWORDS: Record<string, TokenType> = {
     "container": TokenType.CONTAINER,
     "platform": TokenType.PLATFORM,
@@ -37,7 +44,7 @@ export const RESERVED_KEYWORDS: Record<string, TokenType> = {
     "decorates": TokenType.DECORATES,
     "string": TokenType.STRING,
     "int": TokenType.INT,
-    "is": TokenType.IS,
+    "as": TokenType.AS,
     "not": TokenType.NOT,
     "null": TokenType.NULL,
     "extends": TokenType.EXTENDS,

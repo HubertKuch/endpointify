@@ -1,4 +1,4 @@
 model UserBaseCredentials {
-    string name is not null;
-    int age is not null;
+    string name as not null;
+    int age as not null;
 }
