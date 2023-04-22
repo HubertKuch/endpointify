@@ -5,4 +5,5 @@ export default interface ASTNode {
     value: any;
     body?: ASTNode | ASTNode[];
     properties?: ASTNode[];
+    nullable?: boolean;
 }

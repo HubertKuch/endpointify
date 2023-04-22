@@ -42,7 +42,11 @@ export class Parser {
                     properties.push(modelBody.splice(0, indexOfNextProperty + 1));
                 }
 
-                const node: ASTNode = {type: TokenType.MODEL, value: name.value, properties: properties.map(property => this.parseProperty(property, lineCount))}
+                const node: ASTNode = {
+                    type: TokenType.MODEL,
+                    value: name.value,
+                    properties: properties.map(property => this.parseProperty(property.filter(prop => prop.type !== TokenType.DELIMITER), lineCount))
+                }
 
                 astTree.push(node);
 
@@ -59,16 +63,29 @@ export class Parser {
     }
 
     private static parseProperty(plainProperty: Token[], line: number): ASTNode {
-        const probablyType: Token = plainProperty[0];
-        const name: Token = plainProperty[1];
+        const probablyTypeProp: Token = plainProperty[0];
+        const nameProp: Token = plainProperty[1];
+        const asProp: Token = plainProperty[2];
+        const notProp: Token = plainProperty[3];
+        const nullProp: Token = plainProperty[4];
 
-        if (!probablyType) {
+        if (!probablyTypeProp) {
             throw new SyntaxError(`Expected property type, available primitive types are ${TO_STRING_TYPES_REPRESENTATION}`, line);
         }
 
-        const type: TokenType = TYPES[probablyType.value];
+        if (asProp && plainProperty.length == 3) {
+            throw new SyntaxError("Expected valid extra like `not null` after `as` token", line);
+        }
 
-        return { type, value: name };
+        const extraTokens = [asProp, notProp, nullProp];
+
+        if (!extraTokens.every(prop => !!prop)) {
+            throw new SyntaxError(`Expected valid extra syntax. For example \`as not null\` given \`${plainProperty.reduce((prev, curr)=> `${prev}  ${curr.value}`, "")}\``, line);
+        }
+
+        const type: TokenType = TYPES[probablyTypeProp.value];
+
+        return {type, value: nameProp, nullable: !(asProp && notProp && nullProp)};
     }
 
     private static findNextTokenOfType(tokens: Token[], type: TokenType): number {
