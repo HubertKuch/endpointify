@@ -17,19 +17,7 @@ export class Parser {
                     throw new SyntaxError("Next token to `model` should be identifier", lineCount);
                 }
 
-                const nextOpenBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.OPEN_CURLY_BRACES);
-                const nextCloseBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.CLOSE_CURLY_BRACES);
-
-                if (nextOpenBracesIndex === -1) {
-                    throw new SyntaxError("Expected `{` token next to model name", lineCount);
-                }
-
-                if (nextCloseBracesIndex === -1) {
-                    throw new SyntaxError("Expected `}` token next to model body", lineCount);
-                }
-
-                const modelBody: Token[] = this.getTokensBetweenLinesAndTokens(flatTokens, nextOpenBracesIndex, nextCloseBracesIndex)
-                    .filter(token => token.type !== TokenType.OPEN_CURLY_BRACES && token.type !== TokenType.CLOSE_CURLY_BRACES && token.type !== TokenType.EOF);
+                const modelBody: Token[] = this.getBodyBetweenCurlyBraces(flatTokens, lineCount);
                 const properties: Token[][] = [];
 
                 while (modelBody.length > 0) {
@@ -62,6 +50,22 @@ export class Parser {
         return astTree;
     }
 
+    private static getBodyBetweenCurlyBraces(flatTokens: Token[], lineCount: number): Token[] {
+        const nextOpenBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.OPEN_CURLY_BRACES);
+        const nextCloseBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.CLOSE_CURLY_BRACES);
+
+        if (nextOpenBracesIndex === -1) {
+            throw new SyntaxError("Expected `{` token next to model name", lineCount);
+        }
+
+        if (nextCloseBracesIndex === -1) {
+            throw new SyntaxError("Expected `}` token next to model body", lineCount);
+        }
+
+        return this.getTokensBetweenLinesAndTokens(flatTokens, nextOpenBracesIndex, nextCloseBracesIndex)
+            .filter(token => token.type !== TokenType.OPEN_CURLY_BRACES && token.type !== TokenType.CLOSE_CURLY_BRACES && token.type !== TokenType.EOF);
+    }
+
     private static parseProperty(plainProperty: Token[], line: number): ASTNode {
         const probablyTypeProp: Token = plainProperty[0];
         const nameProp: Token = plainProperty[1];
@@ -90,7 +94,7 @@ export class Parser {
         const extraTokens = [asProp, notProp, nullProp];
 
         if (!extraTokens.every(prop => prop === null || prop === undefined)) {
-            throw new SyntaxError(`Expected valid extra syntax. For example \`as not null\` given \`${plainProperty.reduce((prev, curr)=> `${prev}  ${curr.value}`, "")}\``, line);
+            throw new SyntaxError(`Expected valid extra syntax. For example \`as not null\` given \`${plainProperty.reduce((prev, curr) => `${prev}  ${curr.value}`, "")}\``, line);
         }
 
 
