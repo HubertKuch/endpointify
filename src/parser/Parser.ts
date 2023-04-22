@@ -73,17 +73,26 @@ export class Parser {
             throw new SyntaxError(`Expected property type, available primitive types are ${TO_STRING_TYPES_REPRESENTATION}`, line);
         }
 
+        const type: TokenType = TYPES[probablyTypeProp.value];
+
+        if (!type) {
+            throw new SyntaxError(`Expected property type, available primitive types are ${TO_STRING_TYPES_REPRESENTATION}`, line);
+        }
+
+        if (!nameProp || nameProp.type !== TokenType.IDENTIFIER) {
+            throw new SyntaxError(`Expected valid property name got ${nameProp?.value ?? 'nothing'}`, line);
+        }
+
         if (asProp && plainProperty.length == 3) {
             throw new SyntaxError("Expected valid extra like `not null` after `as` token", line);
         }
 
         const extraTokens = [asProp, notProp, nullProp];
 
-        if (!extraTokens.every(prop => !!prop)) {
+        if (!extraTokens.every(prop => prop === null || prop === undefined)) {
             throw new SyntaxError(`Expected valid extra syntax. For example \`as not null\` given \`${plainProperty.reduce((prev, curr)=> `${prev}  ${curr.value}`, "")}\``, line);
         }
 
-        const type: TokenType = TYPES[probablyTypeProp.value];
 
         return {type, value: nameProp, nullable: !(asProp && notProp && nullProp)};
     }
