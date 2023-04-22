@@ -2,6 +2,7 @@ export enum TokenType {
     CONTAINER,
     PLATFORM,
     MODEL,
+    ENUM,
     DECORATES,
     STRING,
     INT,
