@@ -1,5 +1,5 @@
 import {expect} from "chai";
-import {Token} from "../src/helpers";
+import {Token, TokenType} from "../src/helpers";
 import Tokenizer from "../src/Tokenizer";
 
 describe("Tokenizer test", () => {
@@ -50,5 +50,39 @@ describe("Tokenizer test", () => {
         expect(tokens).to.be.not.empty;
         expect(tokens[0][3].value).to.be.eq("USER");
         expect(tokens[0][5].value).to.be.eq("ADMIN");
+    });
+
+    it('should tokenize platform statement with two language identifiers', function () {
+        const source: string = `
+            platform {
+                java {
+                    container org.hubert.models.user;                    
+                    
+                    decorates {
+                        Id as javax.persistence.Id;                    
+                    }
+                }
+                typescript {
+                    container User;
+                    
+                    decorates {
+                        Id as ignore;
+                    }
+                }
+            }
+        `;
+
+        const tokens: Token[][] = Tokenizer.tokenize(source);
+        const flatTokens: Token[] = tokens.flatMap(tokens => tokens);
+        const platform: Token = flatTokens.find(token => token.type === TokenType.PLATFORM);
+
+        const java: Token = flatTokens.find(token => token.type === TokenType.IDENTIFIER && token.value === "java");
+        const typescript: Token = flatTokens.find(token => token.type === TokenType.IDENTIFIER && token.value === "typescript");
+
+        expect(tokens).is.a('array').is.not.null;
+
+        expect(platform).is.not.null;
+        expect(java).is.not.null;
+        expect(typescript).is.not.null;
     });
 })
