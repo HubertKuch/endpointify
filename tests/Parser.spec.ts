@@ -1,4 +1,4 @@
-import {Token} from "../src/helpers";
+import {Token, TokenType} from "../src/helpers";
 import Tokenizer from "../src/Tokenizer";
 import ASTNode from "../src/ast/ASTNode";
 import {Parser} from "../src/parser/Parser";
@@ -66,5 +66,14 @@ describe('Parser test', function () {
         const tokens: Token[][] = Tokenizer.tokenize(source);
 
         throws(() => Parser.parseTokens(tokens), SyntaxError);
+    });
+
+    it('should parse valid platform language identifiers', function () {
+        const source: string = `platform { java {} typescript {} } `;
+
+        const tokens: Token[][] = Tokenizer.tokenize(source);
+        const astTree: ASTNode[] = Parser.parseTokens(tokens);
+
+        expect(astTree[0].type).to.be.eq(TokenType.PLATFORM);
     });
 });

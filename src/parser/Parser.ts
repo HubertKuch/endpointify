@@ -14,6 +14,7 @@ export class Parser {
         const TOKEN_MATCH_ACTIONS: Record<string, tokenAction> = {
             [TokenType.ENUM]: () => this.parseEnum(flatTokens, lineCount),
             [TokenType.MODEL]: () => this.parseModel(flatTokens, lineCount),
+            [TokenType.PLATFORM]: () => this.parsePlatform(flatTokens, lineCount),
             [TokenType.EOF]: () => {
                 lineCount++;
                 return undefined;
@@ -79,7 +80,16 @@ export class Parser {
         return {type: TokenType.ENUM, value: name.value, body};
     }
 
+    private static parsePlatform(flaTokens: Token[], lineCount: number): ASTNode {
+        const body: Token[] = this.getBodyBetweenCurlyBraces(flaTokens, lineCount);
+
+        console.log(body)
+
+        return undefined;
+    }
+
     private static getBodyBetweenCurlyBraces(flatTokens: Token[], lineCount: number, ofType: TokenType = null): Token[] {
+        let foundCurlyBraces: number = 2;
         const nextOpenBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.OPEN_CURLY_BRACES);
         const nextCloseBracesIndex: number = this.findNextTokenOfType(flatTokens, TokenType.CLOSE_CURLY_BRACES);
 
