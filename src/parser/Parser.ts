@@ -1,5 +1,5 @@
 import {TO_STRING_TYPES_REPRESENTATION, Token, TokenType, TYPES} from "../helpers";
-import ASTNode from "../ast/ASTNode";
+import {ASTNode, ASTNodeType, Property, PropertyType} from "../ast/ast";
 import SyntaxError from "../exceptions/SyntaxError";
 
 export class Parser {
@@ -62,7 +62,8 @@ export class Parser {
         }
 
         return {
-            type: TokenType.MODEL,
+            kind: TokenType.MODEL,
+            type: ASTNodeType.MODEL_DECLARATION,
             value: name.value,
             properties: properties.map(property => this.parseProperty(property.filter(prop => prop.type !== TokenType.DELIMITER), lineCount))
         }
@@ -77,7 +78,12 @@ export class Parser {
 
         const body: Token[] = this.getBodyBetweenCurlyBraces(flatTokens, lineCount, TokenType.IDENTIFIER);
 
-        return {type: TokenType.ENUM, value: name.value, body};
+        return {
+            type: ASTNodeType.ENUM_CASE_DECLARATION,
+            kind: TokenType.ENUM,
+            value: name.value,
+            properties: this.parseEnumProperties(body)
+        };
     }
 
     private static parsePlatform(flaTokens: Token[], lineCount: number): ASTNode {
@@ -110,7 +116,7 @@ export class Parser {
             });
     }
 
-    private static parseProperty(plainProperty: Token[], line: number): ASTNode {
+    private static parseProperty(plainProperty: Token[], line: number): Property {
         const probablyTypeProp: Token = plainProperty[0];
         const nameProp: Token = plainProperty[1];
         const asProp: Token = plainProperty[2];
@@ -141,8 +147,23 @@ export class Parser {
             throw new SyntaxError(`Expected valid extra syntax. For example \`as not null\` given \`${plainProperty.reduce((prev, curr) => `${prev}  ${curr.value}`, "")}\``, line);
         }
 
+        return {
+            name: nameProp.value,
+            type: PropertyType.PROPERTY,
+            propertyType: probablyTypeProp.value,
+            nullable: !(asProp && notProp && nullProp)
+        };
+    }
 
-        return {type, value: nameProp, nullable: !(asProp && notProp && nullProp)};
+    public static parseEnumProperties(plainPropertiesTokens: Token[]): Property[] {
+        return plainPropertiesTokens.map((token) => {
+            return {
+                propertyType: '',
+                type: PropertyType.ENUM_CASE,
+                nullable: false,
+                name: token.value
+            };
+        });
     }
 
     private static findNextTokenOfType(tokens: Token[], type: TokenType): number {
